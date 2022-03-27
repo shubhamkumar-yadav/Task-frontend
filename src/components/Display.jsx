@@ -1,20 +1,34 @@
-import React, { useContext } from "react";
-import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
+import React, { useContext,useEffect } from "react";
+import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, makeStyles } from '@material-ui/core';
 import { UserContext } from "../context/UserProvider.jsx";
+import { getData } from "../service/api.js";
+const usestyle = makeStyles({
+    heading:{
+        fontWeight:500,
+        fontSize:18
+    }
+});
 const Display = () => {
-    const { display } = useContext(UserContext);
-    console.log(display);
+    const classes = usestyle();
+    const { display,setDisplay } = useContext(UserContext);
+    useEffect(() => {
+        const getUsers = async () => {
+            let response = await getData("r5343");
+            setDisplay(response.data.data);
+        };
+        getUsers();
+    }, []);
     return (<>
         <TableContainer>
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell align="center">Name</TableCell>
-                        <TableCell align="center">Address</TableCell>
-                        <TableCell align="center">Email&nbsp;</TableCell>
-                        <TableCell align="center">JobStatus&nbsp;</TableCell>
-                        <TableCell align="center">DoLiketoCode&nbsp;</TableCell>
-                        <TableCell align="center">Secret&nbsp;</TableCell>
+                        <TableCell className={classes.heading} align="center">Name</TableCell>
+                        <TableCell className={classes.heading} align="center">Address</TableCell>
+                        <TableCell className={classes.heading} align="center">Email&nbsp;</TableCell>
+                        <TableCell className={classes.heading} align="center">JobStatus&nbsp;</TableCell>
+                        <TableCell className={classes.heading} align="center">DoLiketoCode&nbsp;</TableCell>
+                        <TableCell className={classes.heading} align="center">Secret&nbsp;</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>

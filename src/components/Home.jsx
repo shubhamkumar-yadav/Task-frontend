@@ -1,8 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link, Box, Button, Card, CardContent, Grid, TextField, Typography, makeStyles, Select, MenuItem, Checkbox } from '@material-ui/core';
 import { authenticate } from '../service/api.js';
-import { getData } from '../service/api.js';
-import { UserContext } from '../context/UserProvider.jsx';
 const usestyle = makeStyles(theme => ({
     container: {
         marginTop: '6%',
@@ -29,13 +27,18 @@ const usestyle = makeStyles(theme => ({
     select: {
         width: '100%',
         height: 55,
-        background: "#fff"
+        background: "#fff",
+        color:'grey'
     },
+    likeToCode:{
+        marginTop:'5px',
+        display:'flex',
+        alignItems:'center'
+    }
 }));
 const Home = () => {
     const classes = usestyle();
     const [check, setCheck] = useState(false);
-    const {setDisplay } = useContext(UserContext);
     const [formData, setFormData] = useState({
         name: '',
         address: '',
@@ -52,7 +55,7 @@ const Home = () => {
     const onCheck = (event) => {
         setCheck(event.target.checked);
     };
-    const signupUser = async () => {
+    const signupUser = async (e) => {
         let response = await authenticate(
             {
                 Name: formData.name,
@@ -65,17 +68,10 @@ const Home = () => {
         );
         console.log(response);
     };
-    useEffect(() => {
-        const getUsers = async () => {
-            let response = await getData("r5343");
-            setDisplay(response.data.data);
-        };
-        getUsers();
-    }, []);
     return (<>
         <Box className={classes.container}>
             <Card className={classes.form}>
-                <form>
+                <form onSubmit={(e) => (signupUser(e))}>
                     <CardContent>
                         <Typography gutterBottom variant='h5'>Contact Us</Typography>
                         <Grid container spacing={1}>
@@ -91,12 +87,20 @@ const Home = () => {
                             <Grid xs={12} item>
                                 <Select
                                     onChange={(event) => onInputChange(event)}
-                                    label='JobStatus'
                                     name='jobstatus'
                                     className={classes.select}
                                     variant='outlined'
                                     required={true}
                                     value={formData.jobstatus}
+                                    displayEmpty
+                                    renderValue={formData.jobstatus !== "" ? undefined : () => "JobStatus"}
+                                    MenuProps={{
+                                        getContentAnchorEl: null,
+                                        anchorOrigin: {
+                                          vertical: "bottom",
+                                          horizontal: "left",
+                                        }
+                                      }}
                                 >
                                     <MenuItem value={'Unemployed'}>Unemployed</MenuItem>
                                     <MenuItem value={'Working'}>Working</MenuItem>
@@ -104,12 +108,12 @@ const Home = () => {
                                     <MenuItem value={'Retired'}>Retired</MenuItem>
                                 </Select>
                             </Grid>
-                            <Grid xs={12} item>
+                            <Grid xs={12} item className={classes.likeToCode}>
                                 <Checkbox checked={check} color="primary" name='interested' inputProps={{ 'aria-label': 'uncontrolled-checkbox' }} value={check} onChange={(event) => (onInputChange(event), onCheck(event))} />
                                 <Typography variant='span'>DoLiketoCode</Typography>
                             </Grid>
                             <Grid xs={12} item>
-                                <Button type='submit' variant='contained' color='primary' fullWidth onClick={() => (signupUser())} style={{ marginTop: '10px' }} >Submit</Button>
+                                <Button type='submit' variant='contained' color='primary' fullWidth style={{ marginTop: '10px' }} >Submit</Button>
                             </Grid>
                             <Grid xs={12} item style={{ textAlign: 'center', marginTop: '15px' }}>
                                 <Link href='/users' style={{ textDecoration: 'none', color: 'voilet' }}>Users</Link>
